@@ -3,7 +3,7 @@
 Author: sanford courageux_san@wechat.com
 Date: 2024-11-23 05:44:01
 LastEditors: sanford courageux_san@wechat.com
-LastEditTime: 2024-12-30 16:39:35
+LastEditTime: 2025-01-02 14:09:01
 FilePath: /script/StockeRewards/util/db.py
 Description: 
 '''
@@ -130,7 +130,8 @@ class DB:
 
 
 if __name__=="__main__":
-    db = DB()
-    res = db.query_data(table_name="stocke_rewards", condition={'has_reward': None})
-    print(res[:3])
-    db.close()
+    # db = DB()
+    # res = db.query_data(table_name="stocke_rewards", condition={'has_reward': None})
+    # print(res[:3])
+    # db.close()
+    print(datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).strftime('%Y-%m-%d %H:%M:%S'))

@@ -3,7 +3,7 @@
 Author: sanford courageux_san@wechat.com
 Date: 2024-12-27 08:51:10
 LastEditors: sanford courageux_san@wechat.com
-LastEditTime: 2024-12-30 16:46:15
+LastEditTime: 2025-01-02 14:34:52
 FilePath: /script/StockeRewards/util/bulletin.py
 Description: 
 '''
@@ -11,8 +11,12 @@ import time
 import json
 import requests
 from datetime import datetime, timedelta
-from util.init_log import init_log
-from util.db import DB
+try:
+    from .init_log import init_log
+    from .db import DB
+except ImportError:
+    from init_log import init_log
+    from db import DB
 
 
 

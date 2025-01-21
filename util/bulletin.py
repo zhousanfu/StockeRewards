@@ -3,7 +3,7 @@
 Author: sanford courageux_san@wechat.com
 Date: 2024-12-27 08:51:10
 LastEditors: sanford courageux_san@wechat.com
-LastEditTime: 2025-01-02 14:34:52
+LastEditTime: 2025-01-05 14:40:06
 FilePath: /script/StockeRewards/util/bulletin.py
 Description: 
 '''
@@ -12,17 +12,16 @@ import json
 import requests
 from datetime import datetime, timedelta
 try:
-    from .init_log import init_log
+    from .init_log import logger
     from .db import DB
 except ImportError:
-    from init_log import init_log
+    from init_log import logger
     from db import DB
 
 
 
 URL = "http://www.szse.cn"
 DOWNLOAD_URL = "https://disc.static.szse.cn/download"
-logger = init_log()
 
 def save_data(data: json):
     db = DB()
@@ -31,7 +30,7 @@ def save_data(data: json):
         d = {
             'stock_name': i['secName'][0],
             'announcement_title': i['title'],
-            'pdf_url': DOWNLOAD_URL+i['attachPath'],
+            'pdf_url': i['attachPath'],
             'publish_date': i['publishTime']
         }
         try:
@@ -86,4 +85,5 @@ def init_all_data(day: int=30):
         get_list(date)
 
 if __name__=="__main__":
-    get_list()
+    # get_list()
+    init_all_data(day=90)

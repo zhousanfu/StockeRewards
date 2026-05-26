@@ -42,7 +42,7 @@ def award_qa(db, chatbot, pdf_url):
         if '礼品' in response_json.keys():
             if response_json['礼品'] == 'True' or response_json['礼品'] == True:
                 has_reward = True
-        print(response_json, type(response_json), has_reward)
+        print(json.dumps(response_json, indent=4, ensure_ascii=False))
     except Exception as e:
         logger.error(f"award_qa: {str(e)} pdf: {pdf_url}")
     
@@ -61,7 +61,7 @@ def award_qa(db, chatbot, pdf_url):
 
 def award_qa_all():
     db = DB()
-    model_name = "mlx-community/deepseek-r1-distill-qwen-1.5b"
+    model_name = "mlx-community/Qwen3.5-0.8B-MLX-4bit"
     chatbot = create_chatbot(model_name)
 
     # get_list()
@@ -74,12 +74,12 @@ def award_qa_all():
 
 def test_award_qa():
     db = DB()
-    chatbot = create_chatbot(model_name="mlx-community/Qwen2.5-3B-Instruct-4bit")
+    chatbot = create_chatbot(model_name="mlx-community/Qwen3.5-0.8B-MLX-4bit")
     award_qa(db, chatbot, pdf_url='https://disc.static.szse.cn/download/disc/disk03/finalpage/2024-12-10/9996c33d-43de-486e-b1ef-6ec28e1c24e6.PDF')
     db.close()
 
 
 
 if __name__ == '__main__':
-    award_qa_all()
-    # test_award_qa()
+    # award_qa_all()
+    test_award_qa()

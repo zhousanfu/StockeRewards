@@ -12,7 +12,7 @@ from mlx_lm import load, generate
 from typing import Dict, Optional
 from dataclasses import dataclass
 from util.init_log import logger
-from modelscope import AutoModelForCausalLM, AutoTokenizer
+# from modelscope import AutoModelForCausalLM, AutoTokenizer
 
 
 
@@ -27,10 +27,7 @@ class ChatConfig:
 class ChatBotDarwin:
     def __init__(self, model_name: str):
         try:
-            self.model, self.tokenizer = load(
-                model_name, 
-                tokenizer_config={"eos_token": "<|im_end|>"}
-            )
+            self.model, self.tokenizer = load(model_name)
         except Exception as e:
             raise RuntimeError(f"模型加载失败: {str(e)}")
         
@@ -60,10 +57,10 @@ class ChatBotDarwin:
                 self.model, 
                 self.tokenizer, 
                 prompt=text, 
-                verbose=False,
-                top_p=config.top_p,
-                temp=config.temperature,
-                repetition_penalty=config.repetition_penalty,
+                # verbose=False,
+                # top_p=config.top_p,
+                # temp=config.temperature,
+                # repetition_penalty=config.repetition_penalty,
                 max_tokens=config.max_tokens
             )
             return response
@@ -71,61 +68,61 @@ class ChatBotDarwin:
             logger.error(f"生成回答失败: {str(e)}")
 
 
-class ChatBotLinux:
-    def __init__(self, model_name: str):
-        try:
-            self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype="auto",
-                device_map="auto"
-            )
-            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        except Exception as e:
-            raise RuntimeError(f"模型加载失败: {str(e)}")
+# class ChatBotLinux:
+#     def __init__(self, model_name: str):
+#         try:
+#             self.model = AutoModelForCausalLM.from_pretrained(
+#                 model_name,
+#                 torch_dtype="auto",
+#                 device_map="auto"
+#             )
+#             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+#         except Exception as e:
+#             raise RuntimeError(f"模型加载失败: {str(e)}")
                 
-    def chat(
-        self, 
-        prompt: Dict[str, str],
-        config: Optional[ChatConfig] = None
-    ) -> str:
-        if not isinstance(prompt, dict) or not all(k in prompt for k in ['system_prompt', 'user_prompt']):
-            raise ValueError("prompt 必须是包含 system_prompt 和 user_prompt 的字典")
+#     def chat(
+#         self, 
+#         prompt: Dict[str, str],
+#         config: Optional[ChatConfig] = None
+#     ) -> str:
+#         if not isinstance(prompt, dict) or not all(k in prompt for k in ['system_prompt', 'user_prompt']):
+#             raise ValueError("prompt 必须是包含 system_prompt 和 user_prompt 的字典")
 
-        messages = [
-            {"role": "system", "content": prompt['system_prompt']},
-            {"role": "user", "content": prompt['user_prompt']}
-        ]
+#         messages = [
+#             {"role": "system", "content": prompt['system_prompt']},
+#             {"role": "user", "content": prompt['user_prompt']}
+#         ]
 
-        config = config or ChatConfig()
+#         config = config or ChatConfig()
         
-        try:
-            text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True,
-            )
-            model_inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
+#         try:
+#             text = self.tokenizer.apply_chat_template(
+#                 messages,
+#                 tokenize=False,
+#                 add_generation_prompt=True,
+#             )
+#             model_inputs = self.tokenizer([text], return_tensors="pt").to(self.model.device)
 
-            generated_ids = self.model.generate(
-                **model_inputs,
-                max_new_tokens=config.max_tokens,
-            )
-            generated_ids = [
-                output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
-            ]
+#             generated_ids = self.model.generate(
+#                 **model_inputs,
+#                 max_new_tokens=config.max_tokens,
+#             )
+#             generated_ids = [
+#                 output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+#             ]
 
-            response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+#             response = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
 
-            return response
-        except Exception as e:
-            logger.error(f"生成回答失败: {str(e)}")
+#             return response
+#         except Exception as e:
+#             logger.error(f"生成回答失败: {str(e)}")
 
 
 def create_chatbot(model_name):
     if sys.platform == "darwin":
         chatbot = ChatBotDarwin(model_name)
-    elif sys.platform == "linux" or sys.platform == "win32":
-        chatbot = ChatBotLinux(model_name)
+    # elif sys.platform == "linux" or sys.platform == "win32":
+    #     chatbot = ChatBotLinux(model_name)
 
     return chatbot
 
